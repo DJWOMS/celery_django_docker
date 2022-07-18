@@ -1,9 +1,17 @@
-from django.http import HttpResponse
+from django.views.generic import CreateView
 
-from . import tasks
+from .models import Contact
+from .forms import ContactForm
+from .tasks import write_file
 
 
-def home(request):
-    tasks.write_file.delay()
-    tasks.test_task.delay()
-    return HttpResponse('<h1>Тест задачи celery</h1>')
+class ContactView(CreateView):
+    model = Contact
+    form_class = ContactForm
+    success_url = '/'
+    template_name = 'main/contact.html'
+
+    def form_valid(self, form):
+        form.save()
+        write_file.delay(form.instance.email)
+        return super().form_valid(form)

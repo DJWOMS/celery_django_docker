@@ -5,8 +5,8 @@ from src.main.service import send
 
 
 @app.task()
-def write_file():
-    send("test@ex.com")
+def write_file(email):
+    send(email)
     return True
 
 
