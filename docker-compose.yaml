@@ -28,3 +28,14 @@ services:
       - redis
       - webapp
     command: 'celery -A proj worker -l info'
+
+  beat:
+    restart: always
+    build: .
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+      - webapp
+      - worker
+    command: 'celery -A proj beat -l info'
